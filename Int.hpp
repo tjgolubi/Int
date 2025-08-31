@@ -25,8 +25,8 @@ template<typename To, typename From>
 constexpr To narrow_cast(From x) noexcept { return static_cast<To>(x); }
 
 template<class From, class To>
-concept NonNarrowing = std::convertible_to<From, To>
-              && requires (From x) { To{ x }; }; // list-init rejects narrowing
+concept NonNarrowing = std::same_as<From, To> || (std::convertible_to<From, To>
+              && requires (From x) { To{ x }; }); // list-init rejects narrowing
 
 template<std::integral T=int, std::endian E = std::endian::native>
 requires (std::same_as<T, std::remove_cv_t<T>> && !std::is_reference_v<T>)
@@ -69,6 +69,14 @@ public:
   constexpr Int& operator=(Int<U, E2> x) noexcept
     { _set(T{U{x}}); return *this; }
 
+  // Specifically delete narrowing assignment.
+  template<std::integral U> requires (!NonNarrowing<U, T>)
+  constexpr Int& operator=(U x) noexcept = delete;
+
+  template<std::integral U, std::endian E2> requires (!NonNarrowing<U, T>)
+  constexpr Int& operator=(Int<U, E2> x) noexcept = delete;
+
+  // Accessors.
   constexpr       T& raw()       noexcept { return _raw;   }
   constexpr const T& raw() const noexcept { return _raw;   }
 
@@ -173,6 +181,7 @@ public:
   constexpr Int operator^(Int rhs) const noexcept { return Int{*this} ^= rhs; }
 }; // Int
 
+// Deduce integral type from constructor argument.
 template<std::integral U>
 Int(U) -> Int<U, std::endian::native>;
 
@@ -199,12 +208,12 @@ constexpr Int<T, To> endian_cast(Int<T, From> x) noexcept
   { return Int<T, To>{x}; }
 
 template<std::integral ToT, std::integral FmT, std::endian E>
-requires (!std::is_same_v<ToT, FmT>)
+requires (!std::same_as<ToT, FmT>)
 constexpr Int<ToT, std::endian::native> narrow_cast(Int<FmT, E> x) noexcept
   { return Int<ToT, std::endian::native>{narrow_cast<ToT>(x.value())}; }
 
 template<std::integral ToT, std::integral FmT, std::endian E>
-requires (std::is_same_v<ToT, FmT>)
+requires std::same_as<ToT, FmT>
 constexpr Int<ToT, E> narrow_cast(Int<FmT, E> x) noexcept
   { return x; }
 
