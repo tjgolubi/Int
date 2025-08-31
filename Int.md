@@ -1,3 +1,9 @@
+<!---
+@file
+@copyright 2025 Terry Golubiewski, all rights reserved.
+@author Terry Golubiewski
+--->
+
 # `tjg::Int<T, E>` — fixed-endian integral wrapper
 
 A tiny, trivially-copyable integer wrapper that **stores** in a chosen byte

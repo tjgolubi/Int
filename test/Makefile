@@ -1,4 +1,6 @@
-# Copyright 2025 Terry Golubiewski, all rights reserved.
+# @file
+# @copyright 2025 Terry Golubiewski, all rights reserved.
+# @author Terry Golubiewski
 
 export PROJDIR := $(abspath ..)
 include $(SWDEV)/project.mk

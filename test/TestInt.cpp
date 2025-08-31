@@ -1,3 +1,7 @@
+/// @file
+/// @copyright 2025 Terry Golubiewski, all rights reserved.
+/// @author Terry Golubiewski
+
 // TestInt.cpp — consolidated runtime tests for tjg::Int<T,E>
 // Covers containers, algorithms, memcpy/ptr(), endian round-trips, and
 // randomized properties.
@@ -6,7 +10,7 @@
 //
 // Build: link with GoogleTest and pthread.
 //  g++ -std=c++23 -O2 -I. TestInt.cpp -lgtest -lgtest_main -lpthread -o TestInt
-//
+
 #include "Int.hpp"
 
 #include <gtest/gtest.h>
@@ -57,7 +61,7 @@ using Cases = ::testing::Types<
 >;
 TYPED_TEST_SUITE(IntRT, Cases);
 
-// ---------- Construction / value() / raw() ----------
+// ------ Construction/value()/big()/little()/raw() ----------
 TYPED_TEST(IntRT, ConstructionAndValue) {
   using P = TypeParam;
   using T = P::T;
@@ -72,9 +76,23 @@ TYPED_TEST(IntRT, ConstructionAndValue) {
   } else {
     EXPECT_EQ(x.raw(), std::byteswap(a));
   }
+  constexpr T b = static_cast<T>(0x123456789abcdef0);
+  I y{b};
+  T big;
+  T lil;
+  if constexpr (std::endian::native == std::endian::big) {
+    big = b;
+    lil = std::byteswap(b);
+  } else {
+    lil = b;
+    big = std::byteswap(b);
+  }
+  EXPECT_EQ(y.value() , b  );
+  EXPECT_EQ(y.little(), lil);
+  EXPECT_EQ(y.big()   , big);
 }
 
-// ---------- Equality is raw; ordering is numeric ----------
+// ---------- Equality/ordering is numeric ----------
 TYPED_TEST(IntRT, EqualityVsOrdering) {
   using P = TypeParam;
   using T = P::T;

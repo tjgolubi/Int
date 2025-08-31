@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# @file
+# @copyright 2025 Terry Golubiewski, all rights reserved.
+# @author Terry Golubiewski
+
 set -uo pipefail
 
 CXX="g++ -std=c++23"

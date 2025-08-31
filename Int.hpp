@@ -1,3 +1,7 @@
+/// @file
+/// @copyright 2025 Terry Golubiewski, all rights reserved.
+/// @author Terry Golubiewski
+
 #pragma once
 #include <concepts>   // std::integral
 #include <functional> // std::hash

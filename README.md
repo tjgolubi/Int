@@ -1,3 +1,9 @@
+<!---
+@file
+@copyright 2025 Terry Golubiewski, all rights reserved.
+@author Terry Golubiewski
+--->
+
 # `tjg::Int`
 
 A C++23 header-only utility class for representing integers with an explicit **endianness**.

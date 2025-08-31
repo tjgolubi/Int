@@ -1,8 +1,10 @@
-// int_conv_onefile.cpp
-// Compile one scenario at a time by defining exactly one macro via -D.
-// If none or more than one are defined, we #error to catch it.
+/// @file
+/// @copyright 2025 Terry Golubiewski, all rights reserved.
+/// @author Terry Golubiewski
 
-#include "Int.hpp"  // your tjg::Int header
+/// Compile one scenario at a time by defining exactly one macro via -D.
+
+#include "Int.hpp"
 #include <type_traits>
 #include <bit>
 #include <cstdint>
