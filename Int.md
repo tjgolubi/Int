@@ -1,8 +1,8 @@
-<!---
+<!--
 @file
 @copyright 2025 Terry Golubiewski, all rights reserved.
 @author Terry Golubiewski
---->
+-->
 
 # `tjg::Int<T, E>` — fixed-endian integral wrapper
 

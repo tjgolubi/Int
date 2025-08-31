@@ -1,0 +1,16 @@
+@INCLUDE = $(HOME)/.doxygen
+
+PROJECT_NAME           = "Int"
+PROJECT_BRIEF          = "Fixed-endian integer wrappers and utilities"
+
+INPUT                  = ../
+RECURSIVE              = YES
+EXCLUDE                = ../dox ../test
+#FILE_PATTERNS          = *.hpp *.h *.cpp *.c *.md
+#USE_MDFILE_AS_MAINPAGE = ../Int.md
+
+OUTPUT_DIRECTORY       = .
+HTML_OUTPUT            = html
+
+STRIP_FROM_PATH        = ../
+STRIP_FROM_INC_PATH    = ../
