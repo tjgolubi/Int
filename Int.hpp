@@ -91,6 +91,12 @@ public:
   [[nodiscard]] constexpr T value() const noexcept
     { return _get<std::endian::native>(); }
 
+  [[nodiscard]] constexpr T big() const noexcept
+    { return _get<std::endian::big>(); }
+
+  [[nodiscard]] constexpr T little() const noexcept
+    { return _get<std::endian::little>(); }
+
   constexpr operator T() const noexcept { return value(); }
 
   // Compares numerically, operator== compares raw storage, should work.

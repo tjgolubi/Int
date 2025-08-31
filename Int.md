@@ -137,13 +137,14 @@ struct hash<::tjg::Int<T,E>> {
 > **Notes**
 >
 > • `value()` returns the numeric value as a host-endian `T`.
+> • `big()`   returns the numeric value as a big-endian `T`.
+> • `little()` returns the numeric value as a little-endian `T`.
 > • `raw()` exposes the stored representation (in `E`). Use with care; it’s 
     intended for wire/disk fields.  
 > • `ptr()` exists only when `E == std::endian::native` so that taking the
     address is always safe for direct I/O.  
 > • All operators (arithmetic, comparison, shifts, bitwise) are defined in terms
-    of **numeric value semantics**. The implementation may compare/operate on
-    `raw()` when that’s equivalent (e.g., equality) to avoid extra swaps.  
+    of **numeric value semantics**.
 > • `std::byteswap` is a C++23 facility:
     see [`std::byteswap`](https://en.cppreference.com/w/cpp/numeric/byteswap).  
 > • The three-way comparison operator is standardized in C++20:
@@ -200,6 +201,12 @@ is ill-formed.
 
 - `T value() const noexcept;`  
   Access the numeric value in native endianness.
+
+- `T big() const noexcept;`  
+  Access the numeric value in big endianness.
+
+- `T little() const noexcept;`  
+  Access the numeric value in little endianness.
 
 - `explicit operator T() const noexcept;`  
   Implicit conversion to `T` yields `value()`.
@@ -277,7 +284,6 @@ Network “byte order” is big-endian. These aliases express that directly in t
 #include <array>
 #include <span>
 #include <string>
-#include <string_view>
 #include <exception>
 #include <system_error>
 #include <utility>
@@ -330,10 +336,10 @@ std::string InetPath(NetIpV4 ip) {
   return text ? std::string{text} : std::string{};
 }
 
-NetIpV4 InetAddr(std::string_view dotted) {
+NetIpV4 InetAddr(std::string dotted) {
   auto tmp = InAddr{};
   // inet_pton expects network-order result stored into tmp
-  if (::inet_pton(AF_INET, std::string{dotted}.c_str(), &tmp) != 1)
+  if (::inet_pton(AF_INET, dotted.c_str(), &tmp) != 1)
     return NetIpV4{};
   return tmp.addr();
 }
@@ -343,9 +349,9 @@ struct DatagramSocket {
   int fd{-1};
 
 private:
-  [[noreturn]] static void Throw(std::string_view what) {
+  [[noreturn]] static void Throw(std::string what) {
     throw std::system_error{errno, std::system_category(),
-                          std::string{"DatagramSocket: "} + std::string{what}};
+                          std::string{"DatagramSocket: "} + what};
   }
 
   bool _close() noexcept {
