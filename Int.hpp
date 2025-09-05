@@ -320,19 +320,36 @@ constexpr Int<T, ~E> byteswap(Int<T, E> x) noexcept
 
 /// Alias for big-endian signed Int with underlying type T.
 template<std::signed_integral   T=int>
-using BigInt  = Int<T, std::endian::big>;
+using BigInt    = Int<T, std::endian::big>;
+using BigInt8   = BigInt<std::int8_t>;
+using BigInt16  = BigInt<std::int16_t>;
+using BigInt32  = BigInt<std::int32_t>;
+using BigInt64  = BigInt<std::int64_t>;
 
 /// Alias for little-endian signed Int with underlying type T.
 template<std::signed_integral   T=int>
-using LilInt  = Int<T, std::endian::little>;
+using LilInt    = Int<T, std::endian::little>;
+using LilInt8   = LilInt<std::int8_t>;
+using LilInt16  = LilInt<std::int16_t>;
+using LilInt32  = LilInt<std::int32_t>;
+using LilInt64  = LilInt<std::int64_t>;
 
 /// Alias for big-endian unsigned Int with underlying type T.
 template<std::unsigned_integral T=unsigned>
-using BigUint = Int<T, std::endian::big>;
+using BigUint    = Int<T, std::endian::big>;
+using BigUint8   = BigUint<std::uint8_t>;
+using BigUint16  = BigUint<std::uint16_t>;
+using BigUint32  = BigUint<std::uint32_t>;
+using BigUint64  = BigUint<std::uint64_t>;
+
 
 /// Alias for little-endian unsigned Int with underlying type T.
 template<std::unsigned_integral T=unsigned>
-using LilUint = Int<T, std::endian::little>;
+using LilUint    = Int<T, std::endian::little>;
+using LilUint8   = LilUint<std::uint8_t>;
+using LilUint16  = LilUint<std::uint16_t>;
+using LilUint32  = LilUint<std::uint32_t>;
+using LilUint64  = LilUint<std::uint64_t>;
 
 } // tjg
 
