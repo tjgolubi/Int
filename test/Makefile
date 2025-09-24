@@ -6,8 +6,8 @@ export PROJDIR := $(abspath ..)
 include $(SWDEV)/project.mk
 
 TEST_INT_EXE=TestInt$(DBGSFX).$E
-TARGET1=$(TEST_INT_EXE)
-TARGETS=$(TARGET1)
+TGT1=$(TEST_INT_EXE)
+TARGETS=$(TGT1)
 
 SRC1 := TestInt.cpp
 SOURCE := $(SRC1)
@@ -24,44 +24,51 @@ PROJ_INC:=$(PROJDIR)
 GTEST_LIB:=$(GTEST)/build/lib
 GTEST_INC:=$(GTEST)/googletest
 
-LDLIBS=-lgtest -lgtest_main -lpthread
-LIBPATH=$(GTEST_LIB)
-
 SYSINCL:=$(addsuffix /include, $(GTEST_INC) $(GSL))
 INCLUDE:=$(PROJ_INC)
+LIBPATH:=$(GTEST_LIB)
 
 include $(SWDEV)/$(COMPILER).mk
 include $(SWDEV)/build.mk
 
+LDLIBS+=-lgtest -lgtest_main -lpthread
+
+SHELL:=/bin/bash
+.SHELLFLAGS:=-eu -o pipefail -c
 .ONESHELL:
 
-.PHONY: all clean scour test asan depend
+.PHONY: all clean scour asan test success
 
 all: $(TARGETS)
 
-IntConv.txt: RunIntConv.bash IntConv.cpp ../Int.hpp
-	@echo "Running $<"
-	./RunIntConv.bash > $@ 2>&1
-	x="$$?"
-	tail -1 $@
-	exit $$x
-
-TestInt.txt: $(TEST_INT_EXE)
-	@echo "Running $<"
-	./$(TEST_INT_EXE) > $@ 2>&1
-	x="$$?"
-	tail -2 $@
-	exit $$x
+log/IntConv.log: RunIntConv.bash IntConv.cpp ../Int.hpp
+	@set -v
+	./RunIntConv.bash $(notdir $@)
+	mkdir -p "$(dir $@)"
+	mv "$(notdir $@)" "$@"
 
 TEST_RESULTS:=IntConv.txt TestInt.txt
 
 CLEAN+=$(TEST_RESULTS)
 
-test: depend $(TEST_RESULTS)
+CLEAN += log
+
+LOGFILES:=$(addprefix log/, IntConv.log TestInt.json)
+
+log/%.json: %.$E
+	@set -v
+	./$< --gtest_output=json:$(notdir $@)
+	mkdir -p $(dir $@)
+	mv $(notdir $@) $@
+
+success:
+	@echo "All tests passed."
+
+test: depend $(LOGFILES) success
 
 asan:
 	$(MAKE) clean
 	$(MAKE) CXXFLAGS+=' -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS+=' -fsanitize=address,undefined -fno-omit-frame-pointer'
 
-$(TARGET1): $(OBJ1) $(LIBS)
+$(TGT1): $(OBJ1) $(LIBS)
 	$(LINK)
