@@ -2,6 +2,7 @@
 # @copyright 2025 Terry Golubiewski, all rights reserved.
 # @author Terry Golubiewski
 
+export PROJNAME:= Int
 export PROJDIR := $(abspath ..)
 include $(SWDEV)/project.mk
 
@@ -28,14 +29,14 @@ SYSINCL:=$(addsuffix /include, $(GTEST_INC) $(GSL))
 INCLUDE:=$(PROJ_INC)
 LIBPATH:=$(GTEST_LIB)
 
+SHELL:=/bin/bash
+.SHELLFLAGS:=-eu -o pipefail -c
+.ONESHELL:
+
 include $(SWDEV)/$(COMPILER).mk
 include $(SWDEV)/build.mk
 
 LDLIBS+=-lgtest -lgtest_main -lpthread
-
-SHELL:=/bin/bash
-.SHELLFLAGS:=-eu -o pipefail -c
-.ONESHELL:
 
 .PHONY: all clean scour asan test success
 
